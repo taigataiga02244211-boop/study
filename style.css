@@ -23,4 +23,20 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    font-size: 30px;
+}
+
+.ranking-card{
+    max-width: 600px;
+    height: 300px;
+    border-radius: 20px;
+}
+
+.ranking-card h4{
+    text-align:center;
+    font-size: 30px;
+}
+
+#ranking{
+    font-size: 20px;
 }
