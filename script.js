@@ -1,7 +1,12 @@
 let time = 0;
-let totaltime = 0;
 let timer;
 let running = false;
+
+function getUsername(){
+    return localStorage.getItem("username") || "";
+}
+
+let totaltime = Number(localStorage.getItem("totaltime_" + username)) || 0;
 
 function toggleTimer() {
     let button = document.getElementById("startButton");
@@ -55,6 +60,9 @@ function toggleTimer() {
         String(totalhours).padStart(2, '0') + ":" +
         String(totalMinutes).padStart(2, '0') + ":" +
         String(totalSeconds).padStart(2, '0');
+
+        localStorage.setItem("totaltime_" + getUsername(), totaltime);
+
         time = 0;
         document.getElementById("timer").textContent = "00:00:00";
 
@@ -70,17 +78,38 @@ function updateRecord(studyhours, studyMinutes, studySeconds){
     record.textContent = `${today} : ${subject} / ${String(studyhours).padStart(2, '0')}:${String(studyMinutes).padStart(2, '0')}:${String(studySeconds).padStart(2, '0')}`;
     
     document.getElementById("history").appendChild(record);
+
+    let history = JSON.parse(localStorage.getItem("history_" + getUsername())) || [];
+
+    history.unshift(record.textContent);
+
+    if(history.length > 30){
+        history.pop();
+    }
+    localStorage.setItem("history_" + username, JSON.stringify(history));
+}
+
+function loadHistory(){
+    let history = JSON.parse(localStorage.getItem("history_" + username)) || [];
+
+    document.getElementById("history").innerHTML = "";
+
+    history.forEach(item=>{
+        const p = document.createElement("p");
+        p.textContent = item;
+        document.getElementById("history").appendChild(p);
+    });
 }
 
 //保存
 function saveName(){
     const name = document.getElementById("username").value;
     localStorage.setItem("username", name);
+    location.reload();
 }
 
 //取り出す
-const username = localStorage.getItem("username");
-document.getElementById("username").value = localStorage.getItem("username");
+document.getElementById("username").value = getUsername();
 
 //exec 書き込み専用 CSV 読み込み専用
 //書き込み
@@ -108,8 +137,8 @@ function sendStudyData(){
 //読み込み
 function loadRanking(){
     fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQwQtcZ2JlqvdupX6iiZGwAsx0BTusii3nIzZA6hx4u_VwsBZlVfrmzmJz1TOTlHzH9IM6H0byYqVIx/pub?output=csv")
-  .then(response => response.text())
-  .then(data => {
+        .then(response => response.text())
+        .then(data => {
       const lines = data.split("\n");
       const totals = {};
 
@@ -143,3 +172,16 @@ function loadRanking(){
       document.getElementById("ranking").innerHTML = text;
   });
 }
+
+loadHistory();
+loadRanking();
+
+let totalhours = Math.floor(totaltime / 3600);
+let totalMinutes = Math.floor((totaltime % 3600) / 60);
+let totalSeconds = totaltime % 60;
+
+document.getElementById("total").textContent =
+"合計時間：" +
+String(totalhours).padStart(2,'0') + ":" +
+String(totalMinutes).padStart(2,'0') + ":" +
+String(totalSeconds).padStart(2,'0');
