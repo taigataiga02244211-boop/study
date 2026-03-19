@@ -133,9 +133,11 @@ function loadRanking(){
       let text = "";
 
       ranking.forEach((item,index)=>{
-        const minutes = Math.floor(item[1] / 60);
+        const hours = Math.floor(item[1] / 3600);
+        const minutes = Math.floor((item[1] % 3600) / 60);
         const seconds = item[1] % 60;
-        text += `${index+1}位 ${item[0]} ${minutes}分 ${String(seconds).padStart(2, '0')}秒<br>`;
+
+        text += `${index+1}位 ${item[0]} ${hours}時間 ${minutes}分 ${String(seconds).padStart(2, '0')}秒<br>`;
       });
 
       document.getElementById("ranking").innerHTML = text;
