@@ -87,17 +87,18 @@ document.getElementById("username").value = localStorage.getItem("username");
 function sendStudyData(){
     const username = localStorage.getItem("username");
     const subject = document.getElementById("startContent").value;
-    const totaltime = totaltime;
+    const sendTime = totaltime;
 
     fetch("https://script.google.com/macros/s/AKfycbwLkvn-UJao1oTJY8nleqPTqbPk0KFXva7GaYQ6nZ3rcRyuljj-5iaHSX1CIWU0r3iT/exec", {
         method: "POST",
         body: JSON.stringify({
             name: username,
             subject: subject,
-            time:totaltime
-        })    
+            time: sendTime
+        })
     })
-    .then(response => console.log("成功"))
+    .then(response => response.text())
+    .then(data => console.log(data))
     .catch(error => console.log(error));
 }
 
