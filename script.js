@@ -98,12 +98,16 @@ function sendStudyData(){
         })
     })
     .then(response => response.text())
-    .then(data => console.log(data))
+    .then(data => {
+        console.log(data)
+        loadRanking();
+    })
     .catch(error => console.log(error));
 }
 
 //読み込み
-fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQwQtcZ2JlqvdupX6iiZGwAsx0BTusii3nIzZA6hx4u_VwsBZlVfrmzmJz1TOTlHzH9IM6H0byYqVIx/pub?output=csv")
+function loadRanking(){
+    fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQwQtcZ2JlqvdupX6iiZGwAsx0BTusii3nIzZA6hx4u_VwsBZlVfrmzmJz1TOTlHzH9IM6H0byYqVIx/pub?output=csv")
   .then(response => response.text())
   .then(data => {
       const lines = data.split("\n");
@@ -129,8 +133,9 @@ fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQwQtcZ2JlqvdupX6iiZGwAsx
       let text = "";
 
       ranking.forEach((item,index)=>{
-          text += `${index+1}位 ${item[0]} ${item[1]}分<br>`;
+          text += `${index+1}位 ${item[0]} ${minutes}分 ${String(seconds).padStart(2, '0')}秒<br>`;
       });
 
       document.getElementById("ranking").innerHTML = text;
   });
+}
